@@ -2,6 +2,7 @@ package com.logitrack.backend.controller;
 
 import com.logitrack.backend.model.Producto;
 import com.logitrack.backend.service.ProductoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class ProductoController {
 
     // 1. POST: crear un nuevo prodcuto
     @PostMapping
-    public Producto crearProducto(@RequestBody Producto producto){
+    public Producto crearProducto(@Valid @RequestBody Producto producto){
         return productoService.guardarProducto(producto);
     }
 
@@ -37,7 +38,7 @@ public class ProductoController {
 
     // 4. PUT: actualizar un producto
     @PutMapping("/{id}")
-    public ResponseEntity<Producto> actualizarProducto(@PathVariable Long id, @RequestBody Producto productoExistente){
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable Long id, @Valid @RequestBody Producto productoExistente){
         Producto productoActualizado = productoService.actualizarProducto(id, productoExistente);
         return ResponseEntity.ok(productoActualizado);
     }

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LogiTrack - Panel de Control</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0a192f;
+            color: #e6f1ff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #112240;
+            padding: 2.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+            margin-top: 10vh;
+        }
+        h1, h2 {
+            color: #64ffda;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #233554;
+            border-radius: 4px;
+            background-color: #0a192f;
+            color: white;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #64ffda;
+            color: #0a192f;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #52e0c4;
+        }
+        #dashboard {
+            display: none; /* Oculto hasta iniciar sesión */
+        }
+        .producto-card {
+            background-color: #0a192f;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            border-left: 4px solid #64ffda;
+        }
+        .error-msg {
+            color: #ff6b6b;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="login-section">
+    <h1>LogiTrack</h1>
+    <p style="text-align: center; color: #8892b0;">Acceso Administrativo</p>
+    <input type="text" id="username" placeholder="Usuario" value="admin">
+    <input type="password" id="password" placeholder="Contraseña" value="password123">
+    <button onclick="iniciarSesion()">Iniciar Sesión</button>
+    <p id="login-error" class="error-msg"></p>
+</div>
+
+<div class="container" id="dashboard" style="max-width: 700px;">
+    <h2>Panel de Inventario</h2>
+    <button onclick="cargarProductos()">Cargar Productos</button>
+    <div id="productos-lista"></div>
+</div>
+
+<script>
+    let jwtToken = '';
+
+    async function iniciarSesion() {
+        const user = document.getElementById('username').value;
+        const pass = document.getElementById('password').value;
+        const errorLabel = document.getElementById('login-error');
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: user, password: pass })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                jwtToken = data.token; // Guardamos la manilla VIP
+
+                // Ocultamos login y mostramos dashboard
+                document.getElementById('login-section').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+            } else {
+                errorLabel.innerText = "Credenciales incorrectas.";
+            }
+        } catch (error) {
+            errorLabel.innerText = "Error conectando con el servidor.";
+        }
+    }
+
+    async function cargarProductos() {
+        const listaDiv = document.getElementById('productos-lista');
+        listaDiv.innerHTML = '<p style="text-align:center;">Cargando...</p>';
+
+        try {
+            const response = await fetch('/api/productos', {
+                method: 'GET',
+                headers: {
+                    'Authorization': 'Bearer ' + jwtToken // Enviamos el token
+                }
+            });
+
+            if (response.ok) {
+                const productos = await response.json();
+                listaDiv.innerHTML = ''; // Limpiamos
+
+                productos.forEach(prod => {
+                    listaDiv.innerHTML += `
+                            <div class="producto-card">
+                                <strong>${prod.nombre}</strong> (${prod.categoria})<br>
+                                Stock: ${prod.stock} unidades | Precio: $${prod.precio}
+                            </div>
+                        `;
+                });
+            }
+        } catch (error) {
+            listaDiv.innerHTML = '<p class="error-msg">Error cargando productos.</p>';
+        }
+    }
+</script>
+</body>
+</html>

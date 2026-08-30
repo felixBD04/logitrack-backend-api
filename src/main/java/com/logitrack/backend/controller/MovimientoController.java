@@ -2,6 +2,7 @@ package com.logitrack.backend.controller;
 
 import com.logitrack.backend.model.Movimiento;
 import com.logitrack.backend.service.MovimientoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,7 @@ public class MovimientoController {
     private MovimientoService movimientoService;
 
     @PostMapping
-    public ResponseEntity<Movimiento> registrarMovimiento(@RequestBody Movimiento movimiento){
+    public ResponseEntity<Movimiento> registrarMovimiento(@Valid @RequestBody Movimiento movimiento){
         Movimiento nuevoMovimiento = movimientoService.registrarMovimiento(movimiento);
         return  ResponseEntity.ok(nuevoMovimiento);
     }

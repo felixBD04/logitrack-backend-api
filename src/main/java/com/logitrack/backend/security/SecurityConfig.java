@@ -20,9 +20,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        // --- ¡NUEVAS RUTAS LIBERADAS PARA SWAGGER! ---
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll() // aceso para post man pododer poner la credenciales
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // acesos al swagger
+                        // --- ¡NUEVAS RUTAS LIBERADAS PARA EL FRONTEND! ---
+                        .requestMatchers("/", "/index.html").permitAll() // aceso a la pagina web
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

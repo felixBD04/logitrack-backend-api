@@ -1,6 +1,7 @@
 package com.logitrack.backend.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,7 @@ public class Movimiento {
     @Column(nullable = false)
     private LocalDateTime fecha;
 
+    @Min(value = 1)
     @Column(nullable = false)
     private Integer cantidad;
 

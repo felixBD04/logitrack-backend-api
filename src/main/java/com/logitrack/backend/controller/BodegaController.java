@@ -2,6 +2,7 @@ package com.logitrack.backend.controller;
 
 import com.logitrack.backend.model.Bodega;
 import com.logitrack.backend.service.BodegaService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +19,7 @@ public class BodegaController {
 
     // 1. POST: Crear una nueva bodega
     @PostMapping //es uno de los metods HTTP como estamos creado datos en necesaio el metodo POST
-    public Bodega crearBodega(@RequestBody Bodega bodega){ //RequestBody obtine el json que manda el cliente y lo convierte en un objeto bodega para poder guardarlo en la base de datos
+    public Bodega crearBodega(@Valid @RequestBody Bodega bodega){ //RequestBody obtine el json que manda el cliente y lo convierte en un objeto bodega para poder guardarlo en la base de datos
         return bodegaService.guardarBodega(bodega);
     }
 
@@ -35,14 +36,16 @@ public class BodegaController {
         return ResponseEntity.ok(bodega); // con el ResponseEntity podemos manipular el codigo HTTP para mandar el mesaje seguin correponda en este caso codigo 200 de que si se contro
     }
 
+    // 4. DELETE : Borrar una bodega por su id
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarBodega(@PathVariable Long id){
         bodegaService.eliminarBodega(id);
         return ResponseEntity.noContent().build(); //devuelve 204 de no content
     }
 
+    // 5. PUT : Actualizar una bodega
     @PutMapping("/{id}")
-    public ResponseEntity<Bodega> actualizarBodega(@PathVariable Long id, @RequestBody Bodega bodegaDetalles){
+    public ResponseEntity<Bodega> actualizarBodega(@PathVariable Long id, @Valid @RequestBody Bodega bodegaDetalles){
         Bodega bodegaActualizada = bodegaService.actualizarBodega(id, bodegaDetalles);
         return ResponseEntity.ok(bodegaActualizada);
     }
