@@ -1,6 +1,8 @@
 package com.logitrack.backend.service;
 
+import com.logitrack.backend.exception.ResourceNotFoundException;
 import com.logitrack.backend.model.Bodega;
+import com.logitrack.backend.model.Producto;
 import com.logitrack.backend.repository.BodegaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,27 +29,31 @@ public class BodegaService {
     }
 
     // 3. Consultar una bodega especifica por su ID
-    public Optional<Bodega> obtenerPorId(Long id){ // el Optional<> es usado en caso de no encontrar ningun dato que coinsida para devulva un nulo
-        return bodegaRepository.findById(id);
+    public Bodega obtenerPorId(Long id){ // el Optional<> es usado en caso de no encontrar ningun dato que coinsida para devulva un nulo
+        return bodegaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Bodega no encontrado con el ID: " + id));
     }
 
     // 4. Eliminar una bodega
     public void eliminarBodega(Long id){
+        Bodega bodegaExistente = bodegaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se puede eliminar. Bodega no encontrado con el ID: " + id));
         bodegaRepository.deleteById(id);
     }
 
     // 5. PUT: Actializar una bodega existente
-    public Optional<Bodega> actualizarBodega(Long id, Bodega bodegaDetalles){
-        return bodegaRepository.findById(id).map(bodegaExistente -> { //el .map sirve para que el mismo revise si esta vacio o si tiene algo, si tiene algo devulve un objero bodegaExistente y si no el Optional vacio
+    public Bodega actualizarBodega(Long id, Bodega bodegaDetalles){
+        Bodega bodegaExistente = bodegaRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se puede actualizar. Bodega no encontrado con el ID: " + id));
 
-            //Actializamos con los nuevos datos
-            bodegaExistente.setNombre(bodegaDetalles.getNombre());
-            bodegaExistente.setUbicacion(bodegaDetalles.getUbicacion());
-            bodegaExistente.setCapacidad(bodegaDetalles.getCapacidad());
-            bodegaExistente.setEncargado(bodegaDetalles.getEncargado());
+        //Actializamos con los nuevos datos
+        bodegaExistente.setNombre(bodegaDetalles.getNombre());
+        bodegaExistente.setUbicacion(bodegaDetalles.getUbicacion());
+        bodegaExistente.setCapacidad(bodegaDetalles.getCapacidad());
+        bodegaExistente.setEncargado(bodegaDetalles.getEncargado());
 
-            return bodegaRepository.save(bodegaExistente);
-        }); //al finalizar le proceso esto retorna un objeto Optional con el .save si tiene algo y un empty si no hay nada
+        return bodegaRepository.save(bodegaExistente);
+        //al finalizar le proceso esto retorna un objeto Optional con el .save si tiene algo y un empty si no hay nada
     }
 
 }

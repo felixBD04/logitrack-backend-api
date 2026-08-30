@@ -1,5 +1,6 @@
 package com.logitrack.backend.service;
 
+import com.logitrack.backend.exception.ResourceNotFoundException;
 import com.logitrack.backend.model.Producto;
 import com.logitrack.backend.repository.ProductoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,25 +26,37 @@ public class ProductoService {
     }
 
     // 3. buscar producto por id
-    public Optional<Producto> obtenerPorId(Long id){
-        return productoRepository.findById(id);
+    public Producto obtenerPorId(Long id){
+        return productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Producto no encontrado con el ID: " + id));
     }
 
     // 4. modificar producto
-    public Optional<Producto> actualizarProducto(Long id, Producto productoModificado){
-        return productoRepository.findById(id).map( productoExistente -> {
+    public Producto actualizarProducto(Long id, Producto productoModificado){
+        // Primero verificamos si existe (si no, salta la alarma)
+        Producto productoExistente = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se puede actualizar. Producto no encontrado con el ID: " + id));
 
-            productoExistente.setCategoria(productoModificado.getCategoria());
-            productoExistente.setNombre(productoModificado.getNombre());
-            productoExistente.setPrecio(productoModificado.getPrecio());
-            productoExistente.setStock(productoModificado.getStock());
+        // Si llegó hasta aquí, es porque existe. Lo actualizamos:
+        productoExistente.setCategoria(productoModificado.getCategoria());
+        productoExistente.setNombre(productoModificado.getNombre());
+        productoExistente.setPrecio(productoModificado.getPrecio());
+        productoExistente.setStock(productoModificado.getStock());
 
-            return productoRepository.save(productoExistente);
-        });
+        return productoRepository.save(productoExistente);
     }
 
     // 5. Eliminar Producto
     public void eliminarProducto(Long id){
-        productoRepository.deleteById(id);
+        // Verificamos si existe antes de intentar borrar algo fantasma
+        Producto productoExistente = productoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se puede eliminar. Producto no encontrado con el ID: " + id));
+
+        productoRepository.delete(productoExistente);
+    }
+
+    // 6. informe de stok bajo menor a 10
+    public  List<Producto> productosConStokBajo(Integer cantidad){
+        return productoRepository.findByStockLessThan(cantidad);
     }
 }

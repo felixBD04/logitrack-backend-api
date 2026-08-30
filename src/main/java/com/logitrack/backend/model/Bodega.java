@@ -1,5 +1,6 @@
 package com.logitrack.backend.model;
 
+import com.logitrack.backend.listener.AuditoriaListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor // genera el contructor lleno el que tiene todos los campos el mero mero
 @Entity
 @Table(name = "bodegas")
+@EntityListeners(AuditoriaListener.class)
 public class Bodega {
 
     @Id // le dice a la base de datos que este es el id

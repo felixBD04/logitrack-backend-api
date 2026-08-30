@@ -1,5 +1,6 @@
 package com.logitrack.backend.model;
 
+import com.logitrack.backend.listener.AuditoriaListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -10,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Entity
 @Table(name = "productos")
+@EntityListeners(AuditoriaListener.class)
 public class Producto {
 
     @Id

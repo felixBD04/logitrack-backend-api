@@ -31,12 +31,8 @@ public class BodegaController {
     // 3. GET : Obtener una bodega por su ID
     @GetMapping("/{id}")
     public ResponseEntity<Bodega> obtenerBodega(@PathVariable Long id){ //PathVariable extrae la varible que biene en la ruta en este caso el id api/bodegas/5
-        Optional<Bodega> bodega = bodegaService.obtenerPorId(id);
-        if (bodega.isPresent()){ // el .isPresent sirve para ver si objeto de tipo optional esta vacio o tiene un objeto
-            return ResponseEntity.ok(bodega.get()); // con el ResponseEntity podemos manipular el codigo HTTP para mandar el mesaje seguin correponda en este caso codigo 200 de que si se contro
-        }else{
-            return ResponseEntity.notFound().build(); // en este otro caso 404 que de que no se encontro
-        }
+        Bodega bodega = bodegaService.obtenerPorId(id);
+        return ResponseEntity.ok(bodega); // con el ResponseEntity podemos manipular el codigo HTTP para mandar el mesaje seguin correponda en este caso codigo 200 de que si se contro
     }
 
     @DeleteMapping("/{id}")
@@ -47,12 +43,8 @@ public class BodegaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Bodega> actualizarBodega(@PathVariable Long id, @RequestBody Bodega bodegaDetalles){
-        Optional<Bodega> bodegaActualizada = bodegaService.actualizarBodega(id, bodegaDetalles);
-        if (bodegaActualizada.isPresent()){
-            return ResponseEntity.ok(bodegaActualizada.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        Bodega bodegaActualizada = bodegaService.actualizarBodega(id, bodegaDetalles);
+        return ResponseEntity.ok(bodegaActualizada);
     }
 
 }

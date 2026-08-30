@@ -28,26 +28,18 @@ public class ProductoController {
         return productoService.obtenerProductos();
     }
 
-    // 3. GET: obtner producto por id
+    // 3. GET: obtener producto por id
     @GetMapping("/{id}")
     public ResponseEntity<Producto> obtenerProducto(@PathVariable Long id){
-        Optional<Producto> producto = productoService.obtenerPorId(id);
-        if (producto.isPresent()){
-            return ResponseEntity.ok(producto.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        Producto producto = productoService.obtenerPorId(id);
+        return ResponseEntity.ok(producto);
     }
 
     // 4. PUT: actualizar un producto
     @PutMapping("/{id}")
     public ResponseEntity<Producto> actualizarProducto(@PathVariable Long id, @RequestBody Producto productoExistente){
-        Optional<Producto> productoActualizado = productoService.actualizarProducto(id,productoExistente);
-        if (productoActualizado.isPresent()){
-            return  ResponseEntity.ok(productoActualizado.get());
-        }else{
-            return ResponseEntity.notFound().build();
-        }
+        Producto productoActualizado = productoService.actualizarProducto(id, productoExistente);
+        return ResponseEntity.ok(productoActualizado);
     }
 
     // 5. DELETE : eliminar un producto
@@ -55,5 +47,13 @@ public class ProductoController {
     public ResponseEntity<Void> eliminarProducto(@PathVariable Long id){
         productoService.eliminarProducto(id);
         return ResponseEntity.noContent().build();
+    }
+
+    // 6. GET : Reposte de stok bajo
+    @GetMapping("/bajo-stock")
+    public ResponseEntity<List<Producto>> ListarProductosConBajoStock(@RequestParam(defaultValue = "10") Integer cantidad){
+
+        List<Producto> productos = productoService.productosConStokBajo(cantidad);
+        return ResponseEntity.ok(productos);
     }
 }
