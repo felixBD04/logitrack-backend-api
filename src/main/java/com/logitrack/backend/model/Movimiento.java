@@ -19,7 +19,7 @@ public class Movimiento {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING) // lo que hace es decirle a a la base de datos que guarde el Enum como texto y no con un numero para leerlo mas facil
+    @Enumerated(EnumType.STRING) // lo que hace es decirle a la base de datos que guarde el Enum como texto y no con un numero para leerlo mas facil
     @Column(nullable = false)
     private TipoMovimiento tipoMovimiento;
 
@@ -30,8 +30,9 @@ public class Movimiento {
     @Column(nullable = false)
     private Integer cantidad;
 
-    @Column(nullable = false)
-    private String usuarioResponsable; // Por ahora será un texto, luego lo conectaremos con el login
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
     // Relaciones (Llaves Foraneas)
     @ManyToOne //le indicamos a la base de datos la relacion que va a haber entre las tablas

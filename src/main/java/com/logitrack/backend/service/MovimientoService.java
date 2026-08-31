@@ -5,8 +5,10 @@ import com.logitrack.backend.exception.ResourceNotFoundException;
 import com.logitrack.backend.model.Movimiento;
 import com.logitrack.backend.model.Producto;
 import com.logitrack.backend.model.TipoMovimiento;
+import com.logitrack.backend.model.Usuario;
 import com.logitrack.backend.repository.MovimientoRepository;
 import com.logitrack.backend.repository.ProductoRepository;
+import com.logitrack.backend.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class MovimientoService {
     @Autowired
     private ProductoRepository productoRepository;
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     // consular todos los movimientos
     public List<Movimiento> obtenerTodosLosMovimientos(){
         return movimientoRepository.findAll();
@@ -35,6 +40,17 @@ public class MovimientoService {
     @Transactional // esto basicamente es para el proceso de restar stock y guardar moviemnto se hagan los dos con exito o cancele la operacion
     public Movimiento registrarMovimiento(Movimiento movimiento){
 
+        // obtener el usuario autenticado desde el contexto de Spring Security
+        // obtiene todo el contexto de spring secure para tener la informacion del que esta cediendo a la api
+        Object principal = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((org.springframework.security.core.userdetails.UserDetails) principal).getUsername(); // de toda la informacion sacamos el usuario
+
+        // buscar al usuario real en la base de datos
+        Usuario usuarioActual = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new ResourceNotFoundException("Error: Usuario no autenticado correctamente"));
+
+        // asignar el usuario y la fecha al movimiento
+        movimiento.setUsuario(usuarioActual);
         // colocamos la fecha actual del movimiento
         movimiento.setFecha(LocalDateTime.now());
 

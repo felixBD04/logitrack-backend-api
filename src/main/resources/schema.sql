@@ -25,10 +25,11 @@ CREATE TABLE IF NOT EXISTS movimientos (
     tipo_movimiento VARCHAR(50) NOT NULL,
     fecha DATETIME NOT NULL,
     cantidad INT NOT NULL,
-    usuario_responsable VARCHAR(255) NOT NULL,
+    usuario_id BIGINT NOT NULL,
     producto_id BIGINT NOT NULL,
     bodega_origen_id BIGINT,
     bodega_destino_id BIGINT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id),
     FOREIGN KEY (producto_id) REFERENCES productos(id),
     FOREIGN KEY (bodega_origen_id) REFERENCES bodegas(id),
     FOREIGN KEY (bodega_destino_id) REFERENCES bodegas(id));

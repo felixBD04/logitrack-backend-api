@@ -93,7 +93,7 @@
 <script>
     let jwtToken = '';
 
-    async function iniciarSesion() {
+    async function iniciarSesion() { // funcion asincrona pq vamos a pedir informacion a una api
         const user = document.getElementById('username').value;
         const pass = document.getElementById('password').value;
         const errorLabel = document.getElementById('login-error');
@@ -103,11 +103,11 @@
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ username: user, password: pass })
-            });
+            }); // hacemos la solicitud a la api que nos deberia de devolver el token para poder usar la api con normalidad
 
-            if (response.ok) {
+            if (response.ok) { // si todo el correcto tenemos el token
                 const data = await response.json();
-                jwtToken = data.token; // Guardamos la manilla VIP
+                jwtToken = data.token; // tenemos el token que es como un manilla VIP para ingresar a nuestra api
 
                 // Ocultamos login y mostramos dashboard
                 document.getElementById('login-section').style.display = 'none';
